@@ -23,11 +23,11 @@ jobs:
 
       # 第三步：还原 NuGet 包依赖（如果有）
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore ./ActionTest/ActionTest.csproj
 
       # 第四步：编译项目
       - name: Build the C# project
-        run: dotnet build --no-restore --configuration Release
+        run: dotnet build  ./ActionTest/ActionTest.csproj --no-restore --configuration Release
 
       # 第五步：运行程序（比如控制台应用）
       - name: Run the C# program
