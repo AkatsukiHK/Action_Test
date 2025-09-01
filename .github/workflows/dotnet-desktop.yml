@@ -41,10 +41,10 @@ jobs:
           conda --version
           python --version
 
-      - name: Install Python 3.13
+      - name: Install Python 3.10
         shell: bash -l {0}
         run: |
-          conda create -n pyenv python=3.13 -y
+          conda create -n pyenv python=3.10 -y
           conda activate pyenv
           python -c "import sys; print(sys.executable, sys.version)"
           echo "PYTHONHOME=$(conda info --base)/envs/pyenv" >> $GITHUB_ENV
