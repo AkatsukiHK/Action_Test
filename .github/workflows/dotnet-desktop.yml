@@ -24,31 +24,30 @@ jobs:
       - name: Setup Miniforge3
         uses: conda-incubator/setup-miniconda@v3
         with:
-          miniforge-variant: Miniforge3    
+          miniforge-variant: Miniforge3
           miniforge-version: latest
           auto-update-conda: true
-          auto-activate-base: true
-          remove-profiles: true
-          conda-solver: libmamba
-          clean-patched-environment-file: true
-          run-post: true
-        env:
-          DOTNET_ROOT: /usr/share/dotnet
 
-      - name: Check conda
+      - name: Create Python 3.9 Environment
         shell: bash -l {0}
         run: |
-          conda --version
+          conda create -n pyenv python=3.9 -y
+          conda activate pyenv
           python --version
 
-      - name: Install Python 3.10
+      - name: Set Python Environment Variables
         shell: bash -l {0}
         run: |
-          conda create -n pyenv python=3.10 -y
-          conda activate pyenv
-          python -c "import sys; print(sys.executable, sys.version)"
           echo "PYTHONHOME=$(conda info --base)/envs/pyenv" >> $GITHUB_ENV
           echo "PATH=$(conda info --base)/envs/pyenv/bin:$PATH" >> $GITHUB_ENV
+
+      - name: Find and Set PYTHONNET_PYDLL (libpython3.9.so)
+        shell: bash -l {0}
+        run: |
+          LIBPYTHON=$(find ~/miniconda3/envs/pyenv -name "libpython3.9.so" | head -1)
+          echo "✅ Found Python library: $LIBPYTHON"
+          echo "PYTHONNET_PYDLL=$LIBPYTHON" >> $GITHUB_ENV
+
 
       # 第五步：运行程序（比如控制台应用）
       - name: Run the C# program
