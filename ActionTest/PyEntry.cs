@@ -6,17 +6,37 @@ namespace ActionTest
     {
         public static void Run()
         {
-            Runtime.PythonDLL = "/path/to/libpython3.10.so";
+            string dllPath = @"C:\\Python313\\python313.dll";
+            string pythonHomePath=@"C:\\Python313";
+            string[] py_paths = 
+            {
+                "DLLs",
+                "Lib",
+                "Lib/site-packages",
+                // "Lib/site-packages/win32" ,
+                // "Lib/site-packages/win32/lib",
+                // "Lib/site-packages/Pythonwin"
+            };
+            string pySearchPath = $"{pythonHomePath};";
+            foreach (string p in py_paths)
+            {
+                pySearchPath += $"{pythonHomePath}/{p};";
+            }
+            pySearchPath += $"{Path.GetFullPath($"../../../../Scripts")};";
+            Console.WriteLine(pySearchPath);
+            Environment.SetEnvironmentVariable("PYTHONNET_PYDLL", dllPath);
+            PythonEngine.PythonHome = pythonHomePath;           
+            PythonEngine.PythonPath = pySearchPath;
             PythonEngine.Initialize();
             using (Py.GIL())
             {
                 try
                 {
-                    string scriptPath = "./Scripts";
-                    dynamic sys = Py.Import("sys");
-                    sys.path.append(scriptPath);
-                    dynamic process = Py.Import("mymodule");
-                    process.greet("World");
+                    dynamic process = Py.Import("numpy");
+                    PyObject ar = process.array(new int[] { 1, 2, 3, 4 });
+                    Console.WriteLine(ar);
+                    dynamic mm = Py.Import("mymodule");
+                    Console.WriteLine(mm.greet("World"));
                 }
                 catch (PythonException ex)
                 {
@@ -24,7 +44,6 @@ namespace ActionTest
                     Console.WriteLine(ex.StackTrace);
                 }
             }
-            PythonEngine.Shutdown();
         }
     }
 }
