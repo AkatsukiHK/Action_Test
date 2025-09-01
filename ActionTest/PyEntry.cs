@@ -6,6 +6,7 @@ namespace ActionTest
     {
         public static void Run()
         {
+            Runtime.PythonDLL = "/path/to/libpython3.13.so";
             PythonEngine.Initialize();
             using (Py.GIL())
             {
