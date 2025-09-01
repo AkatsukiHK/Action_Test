@@ -1,0 +1,34 @@
+name: Run C# Program
+
+on:
+  push:
+    branches:
+      - main  # 当你推送到 main 分支时触发
+  workflow_dispatch:
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest  # 使用最新的 Ubuntu 运行环境
+
+    steps:
+      # 第一步：检出你的代码
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 第二步：设置 .NET SDK（自动下载指定版本，比如 8.0.x 或 7.0.x）
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'  # 也可以是 '7.0.x', '6.0.x'，根据你的项目需要
+
+      # 第三步：还原 NuGet 包依赖（如果有）
+      - name: Restore dependencies
+        run: dotnet restore
+
+      # 第四步：编译项目
+      - name: Build the C# project
+        run: dotnet build --no-restore --configuration Release
+
+      # 第五步：运行程序（比如控制台应用）
+      - name: Run the C# program
+        run: dotnet run --project ./ActionTest/ActionTest.csproj --no-build
