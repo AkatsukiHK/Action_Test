@@ -31,4 +31,4 @@ jobs:
 
       # 第五步：运行程序（比如控制台应用）
       - name: Run the C# program
-        run: dotnet run --project --no-build
+        run: dotnet run
