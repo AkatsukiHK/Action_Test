@@ -21,13 +21,27 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
+      - name: Setup Miniconda / Conda
+        uses: conda-incubator/setup-miniconda@v3
         with:
-          python-version: '3.13'
+          miniforge-variant: Mambaforge
+          miniforge-version: latest
+          activate-environment: ""
+          auto-update-conda: true
 
-      - name: Install Python dependencies
-        run: python -m pip install --upgrade pip
+      - name: Install Python 3.13 via conda
+        shell: bash -l {0}
+        run: |
+          conda create -n pyenv python=3.13 -y
+          conda activate pyenv
+          python -c "import sys; print(sys.executable, sys.version)"
+
+      - name: Set up Python environment variables for Python.NET
+        shell: bash -l {0}
+        run: |
+          # 设置 Python 根目录，让 pythonnet 能找到 libpython.so
+          echo "PYTHONHOME=$(conda info --base)/envs/pyenv" >> $GITHUB_ENV
+          echo "PATH=$(conda info --base)/envs/pyenv/bin:$PATH" >> $GITHUB_ENV
 
       # 第五步：运行程序（比如控制台应用）
       - name: Run the C# program
