@@ -21,25 +21,32 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Setup Miniconda / Conda
+      - name: Setup Miniforge3
         uses: conda-incubator/setup-miniconda@v3
         with:
-          miniforge-variant: Mambaforge
+          miniforge-variant: Miniforge3    
           miniforge-version: latest
-          activate-environment: ""
           auto-update-conda: true
+          auto-activate-base: true
+          remove-profiles: true
+          conda-solver: libmamba
+          clean-patched-environment-file: true
+          run-post: true
+        env:
+          DOTNET_ROOT: /usr/share/dotnet
 
-      - name: Install Python 3.13 via conda
+      - name: Check conda
+        shell: bash -l {0}
+        run: |
+          conda --version
+          python --version
+
+      - name: Install Python 3.13
         shell: bash -l {0}
         run: |
           conda create -n pyenv python=3.13 -y
           conda activate pyenv
           python -c "import sys; print(sys.executable, sys.version)"
-
-      - name: Set up Python environment variables for Python.NET
-        shell: bash -l {0}
-        run: |
-          # 设置 Python 根目录，让 pythonnet 能找到 libpython.so
           echo "PYTHONHOME=$(conda info --base)/envs/pyenv" >> $GITHUB_ENV
           echo "PATH=$(conda info --base)/envs/pyenv/bin:$PATH" >> $GITHUB_ENV
 
